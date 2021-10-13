@@ -4,6 +4,7 @@ namespace App\Game\Contracts;
 
 use App\Game\Contracts\Entities\DivisionInterface;
 use App\Game\Contracts\Entities\MatchInterface;
+use App\Game\Contracts\Entities\TeamInterface;
 
 interface MatchDistributorInterface
 {
@@ -14,9 +15,22 @@ interface MatchDistributorInterface
     public function distributeTeamsAmongstOneDivision(DivisionInterface $division): array;
 
     /**
-     * @param DivisionInterface $firstDivision
-     * @param DivisionInterface $secondDivision
+     * @param array $firstDivisionTeams
+     * @param array $secondDivisionTeams
      * @return MatchInterface[]
      */
-    public function distributeTeamsAgainstDivisions(DivisionInterface $firstDivision, DivisionInterface $secondDivision): array;
+    public function distributeTeamsAgainstDivisionsInPlayOff(array $firstDivisionTeams, array $secondDivisionTeams): array;
+
+    /**
+     * @param array $teams
+     * @return MatchInterface[]
+     */
+    public function distributeTeamsInSemiFinal(array $teams): array;
+
+    /**
+     * @param TeamInterface $firstTeam
+     * @param TeamInterface $secondTeam
+     * @return MatchInterface
+     */
+    public function distributeTeamsInFinal(TeamInterface $firstTeam, TeamInterface $secondTeam): array;
 }
