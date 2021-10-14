@@ -32,5 +32,5 @@ interface MatchDistributorInterface
      * @param TeamInterface $secondTeam
      * @return MatchInterface
      */
-    public function distributeTeamsInFinal(TeamInterface $firstTeam, TeamInterface $secondTeam): array;
+    public function distributeTeamsInFinal(TeamInterface $firstTeam, TeamInterface $secondTeam): MatchInterface;
 }

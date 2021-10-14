@@ -6,6 +6,7 @@ use App\Game\Contracts\Entities\DivisionInterface;
 use App\Game\Contracts\Entities\MatchInterface;
 use App\Game\Contracts\Entities\TeamInterface;
 use App\Game\Contracts\GameRunnerInterface;
+use App\Game\Contracts\GameServiceInterface;
 use App\Game\Contracts\MatchDistributorInterface;
 use App\Game\Contracts\MatchRunnerInterface;
 use App\Game\Contracts\WinnerTeamsDetectorInterface;
@@ -20,28 +21,36 @@ class GameRunner implements GameRunnerInterface
     private MatchDistributorInterface $matchDistributor;
     private MatchRunnerInterface $matchRunner;
     private WinnerTeamsDetectorInterface $winnerTeamsDetector;
+    private GameServiceInterface $gameService;
 
     /**
+     * GameRunner constructor.
      * @param MatchDistributorInterface $matchDistributor
      * @param MatchRunnerInterface $matchRunner
      * @param WinnerTeamsDetectorInterface $winnerTeamsDetector
+     * @param GameServiceInterface $gameService
      */
-    public function __construct(MatchDistributorInterface $matchDistributor, MatchRunnerInterface $matchRunner, WinnerTeamsDetectorInterface $winnerTeamsDetector)
-    {
+    public function __construct(
+        MatchDistributorInterface $matchDistributor,
+        MatchRunnerInterface $matchRunner,
+        WinnerTeamsDetectorInterface $winnerTeamsDetector,
+        GameServiceInterface $gameService
+    ) {
         $this->matchDistributor = $matchDistributor;
         $this->matchRunner = $matchRunner;
         $this->winnerTeamsDetector = $winnerTeamsDetector;
+        $this->gameService = $gameService;
     }
 
-
-    public function run(DivisionInterface $firstDivision, DivisionInterface $secondDivision): array
+    public function run(DivisionInterface $firstDivision, DivisionInterface $secondDivision): TeamInterface
     {
         $firstDivisionWinners = $this->runFirstStepForDivision($firstDivision);
         $secondDivisionWinners = $this->runFirstStepForDivision($secondDivision);
 
-        return $this->runPlayOff($firstDivisionWinners, $secondDivisionWinners);
+        $playOffWinners = $this->runPlayOff($firstDivisionWinners, $secondDivisionWinners);
+        $semiFinalWinners = $this->runSemiFinal($playOffWinners);
+        return $this->runFinal(...$semiFinalWinners);
     }
-
 
     /**
      * @param TeamInterface[] $firstDivisionWinners
@@ -82,15 +91,16 @@ class GameRunner implements GameRunnerInterface
         return $this->winnerTeamsDetector->detectWinnerTeams(self::FIRST_TOP, $divisionMatches);
     }
     /**
-     * @param DivisionInterface $division
-     * @return TeamInterface[]
+     * @param TeamInterface $firstTeam
+     * @param TeamInterface $secondTeam
+     * @return TeamInterface
      */
-
-    private function runFinal(TeamInterface $firstTeam, TeamInterface $secondTeam): array
+    private function runFinal(TeamInterface $firstTeam, TeamInterface $secondTeam): TeamInterface
     {
-        $divisionMatches = $this->distributeTeams($division);
-        $this->runMatches($divisionMatches);
-        return $this->winnerTeamsDetector->detectWinnerTeams(self::FIRST_TOP, $divisionMatches);
+        $match = $this->matchDistributor->distributeTeamsInFinal($firstTeam, $secondTeam);
+
+        $this->runMatches([$match]);
+        return $this->winnerTeamsDetector->detectWinnerTeams(self::FINAL, [$match])[0];
     }
 
     /**

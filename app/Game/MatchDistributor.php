@@ -22,7 +22,7 @@ class MatchDistributor implements MatchDistributorInterface
                 if ($team->getName() == $oppositeTeam->getName()) {
                     continue;
                 }
-                $matches[] = new Match($team, $oppositeTeam);
+                $matches[] = new Match(Match::STEP_TYPE_DIVISION, $team, $oppositeTeam);
             }
         }
         return $matches;
@@ -41,7 +41,7 @@ class MatchDistributor implements MatchDistributorInterface
         $matches = [];
 
         while (count($firstDivisionTeams) && count($secondDivisionTeams)) {
-            $matches[] = new Match(array_pop($firstDivisionTeams), array_pop($firstDivisionTeams));
+            $matches[] = new Match(Match::STEP_TYPE_PLAY_OFF, array_pop($firstDivisionTeams), array_pop($firstDivisionTeams));
         }
 
         return $matches;
@@ -58,7 +58,7 @@ class MatchDistributor implements MatchDistributorInterface
         $lastIndex = count($teams) - 1;
 
         for ($i = 0; $i < (count($teams) / 2); $i++) {
-            $matches[] = new Match($teams[$i], $teams[$lastIndex - $i]);
+            $matches[] = new Match(Match::STEP_TYPE_SEMIFINAL, $teams[$i], $teams[$lastIndex - $i]);
         }
 
         return $matches;
@@ -71,7 +71,6 @@ class MatchDistributor implements MatchDistributorInterface
      */
     public function distributeTeamsInFinal(TeamInterface $firstTeam, TeamInterface $secondTeam): MatchInterface
     {
-        return new Match($firstTeam, $secondTeam);
+        return new Match(Match::STEP_TYPE_FINAL, $firstTeam, $secondTeam);
     }
-
 }

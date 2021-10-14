@@ -7,17 +7,20 @@ use App\Game\Contracts\Entities\TeamInterface;
 
 class Match implements MatchInterface
 {
+    private int $stepType;
     private int $leftTeamScore;
     private int $rightTeamScore;
     private TeamInterface $leftTeam;
     private TeamInterface $rightTeam;
 
     /**
+     * @param int $stepType
      * @param TeamInterface $leftTeam
      * @param TeamInterface $rightTeam
      */
-    public function __construct(TeamInterface $leftTeam, TeamInterface $rightTeam)
+    public function __construct(int $stepType, TeamInterface $leftTeam, TeamInterface $rightTeam)
     {
+        $this->stepType = $stepType;
         $this->leftTeam = $leftTeam;
         $this->rightTeam = $rightTeam;
         $this->leftTeamScore = 0;
@@ -69,5 +72,11 @@ class Match implements MatchInterface
         return $this->rightTeam;
     }
 
-
+    /**
+     * @return int
+     */
+    public function getStepType(): int
+    {
+        return $this->stepType;
+    }
 }

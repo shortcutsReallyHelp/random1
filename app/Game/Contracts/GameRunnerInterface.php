@@ -3,8 +3,9 @@
 namespace App\Game\Contracts;
 
 use App\Game\Contracts\Entities\DivisionInterface;
+use App\Game\Contracts\Entities\TeamInterface;
 
 interface GameRunnerInterface
 {
-    public function run(DivisionInterface $firstDivision, DivisionInterface $secondDivision): array;
+    public function run(DivisionInterface $firstDivision, DivisionInterface $secondDivision): TeamInterface;
 }
