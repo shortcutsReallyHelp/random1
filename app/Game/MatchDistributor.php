@@ -41,7 +41,7 @@ class MatchDistributor implements MatchDistributorInterface
         $matches = [];
 
         while (count($firstDivisionTeams) && count($secondDivisionTeams)) {
-            $matches[] = new Match(Match::STEP_TYPE_PLAY_OFF, array_pop($firstDivisionTeams), array_pop($firstDivisionTeams));
+            $matches[] = new Match(Match::STEP_TYPE_PLAY_OFF, array_pop($firstDivisionTeams), array_pop($secondDivisionTeams));
         }
 
         return $matches;

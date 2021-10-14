@@ -15,6 +15,7 @@ class Team implements TeamInterface
     public function __construct(string $name)
     {
         $this->name = $name;
+        $this->score = 0;
     }
 
     /**
