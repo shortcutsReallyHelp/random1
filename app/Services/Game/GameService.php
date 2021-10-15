@@ -9,10 +9,8 @@ use App\Game\Contracts\GameServiceInterface;
 
 class GameService implements GameServiceInterface
 {
-    /**
-     * @param MatchInterface[] $matches
-     */
-    public function saveMatchResults(array $matches): void
+
+    public function saveMatchResults(string $gameKey, int $gameStepType, array $matches): void
     {
         // TODO: Implement saveMatchResults() method.
     }

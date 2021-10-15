@@ -7,5 +7,5 @@ use App\Game\Contracts\Entities\TeamInterface;
 
 interface GameRunnerInterface
 {
-    public function run(DivisionInterface $firstDivision, DivisionInterface $secondDivision): TeamInterface;
+    public function run(string $gameKey, DivisionInterface $firstDivision, DivisionInterface $secondDivision): TeamInterface;
 }

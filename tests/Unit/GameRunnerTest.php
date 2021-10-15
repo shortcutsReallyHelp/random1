@@ -77,7 +77,7 @@ class GameRunnerTest extends TestCase
          * @var GameRunner $gameRunner
          */
         $gameRunner = $this->app->make(GameRunner::class);
-        $winnerTeam = $gameRunner->run($firstDivision, $secondDivision);
+        $winnerTeam = $gameRunner->run('2021 game', $firstDivision, $secondDivision);
 
         $this->assertEquals('1A', $winnerTeam->getName());
     }

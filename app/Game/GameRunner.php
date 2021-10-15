@@ -10,6 +10,7 @@ use App\Game\Contracts\GameServiceInterface;
 use App\Game\Contracts\MatchDistributorInterface;
 use App\Game\Contracts\MatchRunnerInterface;
 use App\Game\Contracts\WinnerTeamsDetectorInterface;
+use App\Game\Entities\Match;
 
 class GameRunner implements GameRunnerInterface
 {
@@ -42,14 +43,14 @@ class GameRunner implements GameRunnerInterface
         $this->gameService = $gameService;
     }
 
-    public function run(DivisionInterface $firstDivision, DivisionInterface $secondDivision): TeamInterface
+    public function run(string $gameKey, DivisionInterface $firstDivision, DivisionInterface $secondDivision): TeamInterface
     {
-        $firstDivisionWinners = $this->runFirstStepForDivision($firstDivision);
-        $secondDivisionWinners = $this->runFirstStepForDivision($secondDivision);
+        $firstDivisionWinners = $this->runFirstStepForDivision($gameKey, $firstDivision);
+        $secondDivisionWinners = $this->runFirstStepForDivision($gameKey, $secondDivision);
 
-        $playOffWinners = $this->runPlayOff($firstDivisionWinners, $secondDivisionWinners);
-        $semiFinalWinners = $this->runSemiFinal($playOffWinners);
-        return $this->runFinal(...$semiFinalWinners);
+        $playOffWinners = $this->runPlayOff($gameKey, $firstDivisionWinners, $secondDivisionWinners);
+        $semiFinalWinners = $this->runSemiFinal($gameKey, $playOffWinners);
+        return $this->runFinal($gameKey, ...$semiFinalWinners);
     }
 
     /**
@@ -57,49 +58,60 @@ class GameRunner implements GameRunnerInterface
      * @param TeamInterface[] $secondDivisionWinners
      * @return TeamInterface[]
      */
-    private function runPlayOff(array $firstDivisionWinners, array $secondDivisionWinners): array
+    private function runPlayOff(string $gameKey, array $firstDivisionWinners, array $secondDivisionWinners): array
     {
         array_walk($firstDivisionWinners, fn(TeamInterface $team) => $team->resetScore());
         array_walk($secondDivisionWinners, fn(TeamInterface $team) => $team->resetScore());
 
         $matches = $this->matchDistributor->distributeTeamsAgainstDivisionsInPlayOff($firstDivisionWinners, $secondDivisionWinners);
         $this->runMatches($matches);
+
+        $this->gameService->saveMatchResults($gameKey, Match::STEP_TYPE_PLAY_OFF, $matches);
         return $this->winnerTeamsDetector->detectWinnerTeams(self::PLAY_OFF_TOP, $matches);
     }
 
     /**
+     * @param string $gameKey
      * @param TeamInterface[] $teams
      * @return TeamInterface[] $teams
      */
-    private function runSemiFinal(array $teams): array
+    private function runSemiFinal(string $gameKey, array $teams): array
     {
         array_walk($teams, fn(TeamInterface $team) => $team->resetScore());
 
         $matches = $this->matchDistributor->distributeTeamsInSemiFinal($teams);
         $this->runMatches($matches);
+
+        $this->gameService->saveMatchResults($gameKey, Match::STEP_TYPE_SEMIFINAL, $matches);
         return $this->winnerTeamsDetector->detectWinnerTeams(self::SEMIFINAL_TOP, $matches);
     }
 
     /**
+     * @param string $gameKey
      * @param DivisionInterface $division
      * @return TeamInterface[]
      */
-    private function runFirstStepForDivision(DivisionInterface $division): array
+    private function runFirstStepForDivision(string $gameKey, DivisionInterface $division): array
     {
         $divisionMatches = $this->distributeTeams($division);
         $this->runMatches($divisionMatches);
+
+        $this->gameService->saveMatchResults($gameKey, Match::STEP_TYPE_DIVISION, $divisionMatches);
         return $this->winnerTeamsDetector->detectWinnerTeams(self::FIRST_TOP, $divisionMatches);
     }
     /**
+     * @param string $gameKey
      * @param TeamInterface $firstTeam
      * @param TeamInterface $secondTeam
      * @return TeamInterface
      */
-    private function runFinal(TeamInterface $firstTeam, TeamInterface $secondTeam): TeamInterface
+    private function runFinal(string $gameKey, TeamInterface $firstTeam, TeamInterface $secondTeam): TeamInterface
     {
         $match = $this->matchDistributor->distributeTeamsInFinal($firstTeam, $secondTeam);
 
         $this->runMatches([$match]);
+
+        $this->gameService->saveMatchResults($gameKey, Match::STEP_TYPE_FINAL, [$match]);
         return $this->winnerTeamsDetector->detectWinnerTeams(self::FINAL, [$match])[0];
     }
 
