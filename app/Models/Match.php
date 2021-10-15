@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Match extends Model
@@ -17,4 +18,14 @@ class Match extends Model
         'step_type',
         'game_key',
     ];
+
+    public function leftTeam(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'left_team_id');
+    }
+
+    public function rightTeam(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'right_team_id');
+    }
 }
