@@ -11,7 +11,6 @@ use Illuminate\Support\Str;
 
 class GameController extends Controller
 {
-    //пока не тестил
     public function index()
     {
         return MatchResource::collection(Match::query()
