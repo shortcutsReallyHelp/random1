@@ -14,7 +14,7 @@ services:
       - php
       - postgres
     ports:
-      - 81:80
+      - 80:80
   php:
     container_name: random1-php
     build:
@@ -29,7 +29,7 @@ services:
     links:
       - postgres
     ports:
-      - 9001:9000
+      - 9000:9000
   postgres:
     container_name: random1-postgres
     image: postgres:12
@@ -40,4 +40,4 @@ services:
     volumes:
       - ./docker.dev/volumes/postgres:/data/postgres
     ports:
-      - 5433:5432
+      - 5431:5432
