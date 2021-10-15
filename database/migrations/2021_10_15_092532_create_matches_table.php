@@ -19,6 +19,8 @@ class CreateMatchesTable extends Migration
             $table->foreignId('right_team_id')->references('id')->on('teams');
             $table->integer('left_team_score');
             $table->integer('right_team_score');
+            $table->integer('step_type');
+            $table->string('game_key');
             $table->timestamps();
             $table->softDeletes();
         });
