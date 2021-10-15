@@ -10,7 +10,7 @@ use App\Game\Contracts\MatchDistributorInterface;
 use App\Game\Contracts\WinnerTeamsDetectorInterface;
 use App\Game\GameRunner;
 use App\Game\MatchDistributor;
-use App\Game\WinnersTeamDetector;
+use App\Game\WinnerTeamsDetector;
 use App\Services\Game\GameService;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +20,7 @@ class GameServiceProvider extends ServiceProvider
     {
         $this->app->instance(GameRunnerInterface::class, GameRunner::class);
         $this->app->instance(MatchDistributorInterface::class, MatchDistributor::class);
-        $this->app->instance(WinnerTeamsDetectorInterface::class, WinnersTeamDetector::class);
+        $this->app->instance(WinnerTeamsDetectorInterface::class, WinnerTeamsDetector::class);
 
         $this->app->instance(GameServiceInterface::class, GameService::class);
     }
