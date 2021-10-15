@@ -67,7 +67,10 @@ class GameRunner implements GameRunnerInterface
         $this->runMatches($matches);
 
         $this->gameService->saveMatchResults($gameKey, Match::STEP_TYPE_PLAY_OFF, $matches);
-        return $this->winnerTeamsDetector->detectWinnerTeams(self::PLAY_OFF_TOP, $matches);
+        return $this->winnerTeamsDetector->detectWinnerTeams(self::PLAY_OFF_TOP, [
+            ...$firstDivisionWinners,
+            ...$secondDivisionWinners,
+        ]);
     }
 
     /**
@@ -83,7 +86,7 @@ class GameRunner implements GameRunnerInterface
         $this->runMatches($matches);
 
         $this->gameService->saveMatchResults($gameKey, Match::STEP_TYPE_SEMIFINAL, $matches);
-        return $this->winnerTeamsDetector->detectWinnerTeams(self::SEMIFINAL_TOP, $matches);
+        return $this->winnerTeamsDetector->detectWinnerTeams(self::SEMIFINAL_TOP, $teams);
     }
 
     /**
@@ -97,7 +100,7 @@ class GameRunner implements GameRunnerInterface
         $this->runMatches($divisionMatches);
 
         $this->gameService->saveMatchResults($gameKey, Match::STEP_TYPE_DIVISION, $divisionMatches);
-        return $this->winnerTeamsDetector->detectWinnerTeams(self::FIRST_TOP, $divisionMatches);
+        return $this->winnerTeamsDetector->detectWinnerTeams(self::FIRST_TOP, $division->getTeams());
     }
     /**
      * @param string $gameKey
@@ -112,7 +115,7 @@ class GameRunner implements GameRunnerInterface
         $this->runMatches([$match]);
 
         $this->gameService->saveMatchResults($gameKey, Match::STEP_TYPE_FINAL, [$match]);
-        return $this->winnerTeamsDetector->detectWinnerTeams(self::FINAL, [$match])[0];
+        return $this->winnerTeamsDetector->detectWinnerTeams(self::FINAL, [$firstTeam, $secondTeam])[0];
     }
 
     /**

@@ -9,8 +9,11 @@ class MatchRunner implements MatchRunnerInterface
 {
     public function run(MatchInterface $match): void
     {
-        $match->incrementLeftTeamScore(rand(0,1));
-        $match->incrementRightTeamScore(rand(0,1));
+        $match->incrementLeftTeamScore(rand(0,6));
+        $match->incrementRightTeamScore(rand(0,6));
+
+        $match->getRightTeam()->incrementScore($match->getRightTeamScore());
+        $match->getLeftTeam()->incrementScore($match->getLeftTeamScore());
 
         if ($match->getLeftTeamScore() == $match->getRightTeamScore()) {
             $this->run($match);
