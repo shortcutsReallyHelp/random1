@@ -11,5 +11,9 @@ class MatchRunner implements MatchRunnerInterface
     {
         $match->incrementLeftTeamScore(rand(0,1));
         $match->incrementRightTeamScore(rand(0,1));
+
+        if ($match->getLeftTeamScore() == $match->getRightTeamScore()) {
+            $this->run($match);
+        }
     }
 }

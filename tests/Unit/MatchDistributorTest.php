@@ -23,10 +23,10 @@ class MatchDistributorTest extends TestCase
     {
         $division = new Division(
             'First', [
-            new Team('1.1'),
-            new Team('1.2'),
-            new Team('1.3'),
-        ]
+                new Team('1.1'),
+                new Team('1.2'),
+                new Team('1.3'),
+            ]
         );
 
         $matches = $this->matchDistributor->distributeTeamsAmongstOneDivision($division);
